@@ -57,20 +57,25 @@ class Project(models.Model):
     duration_in_days = models.PositiveIntegerField(
         blank=True,
         null=True,
+        verbose_name="Duration in days"
+    )
+    estimated_hours = models.FloatField(
+        null=True,
+        blank=True,
         verbose_name="Estimated Hours"
     )
     start_date = models.DateField(
         blank=True,
         null=True,
         verbose_name="Start Date",
-        default=date.today
+        default=date.today()
     )
     created_on = models.DateTimeField(
-        default=date.today,
+        auto_now=True,
         editable=False
     )
     last_edited_on = models.DateTimeField(
-        default=date.today,
+        auto_now=True,
         editable=False
     )
 
