@@ -9,3 +9,7 @@ class Product(models.Model):
     supplier = models.CharField(max_length=150, blank=False, null=False)
     created_on = models.DateTimeField(auto_now_add=True, editable=False)
     last_edited_on = models.DateTimeField(auto_now=True, editable=False)
+    barcode = models.IntegerField()
+
+    def __str__(self):
+        return self.name
