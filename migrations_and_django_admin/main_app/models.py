@@ -9,3 +9,4 @@ class Product(models.Model):
     supplier = models.CharField(max_length=150, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True, editable=False)
     last_edited_on = models.DateTimeField(auto_now=True, editable=False)
+    count = models.PositiveIntegerField(default=0)
