@@ -77,7 +77,7 @@ def add_products_with_count_value():
 
 # Run and print your queries
 
-# print(add_initial_products())
+print(add_initial_products())
 
 # print(add_new_product_with_time_of_creation_and_edition())
 
