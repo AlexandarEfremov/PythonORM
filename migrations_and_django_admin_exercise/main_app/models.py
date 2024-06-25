@@ -10,3 +10,14 @@ class Shoe(models.Model):
 #python manage.py migrate
 
 #result 0001_initial.py
+
+
+class UniqueBrands(models.Model):
+    brand = models.CharField(max_length=25, unique=True)
+    size = models.PositiveIntegerField()
+
+#Commands executed:
+#python manage.py makemigrations
+#python manage.py migrate
+
+#result 0002_uniquebrands.py
