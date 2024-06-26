@@ -8,13 +8,4 @@ class EventRegistrationAdmin(admin.ModelAdmin):
     list_display = ('event_name', 'participant_name', 'registration_date')
     search_fields = ('event_name', 'participant_name')
     list_filter = ('event_name', 'registration_date')
-    # fieldsets = (
-    #     ('General Information', {
-    #         'fields': ('name', 'description', 'price', 'barcode')
-    #     }),
-    #     ('Categorization', {
-    #         'fields': ('category', 'supplier')
-    #     }),
-    # )
-    # date_hierarchy = 'created_on'
 
