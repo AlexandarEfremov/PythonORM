@@ -108,3 +108,24 @@ class Course(models.Model):
 #python manage.py migrate
 
 #result 0008_course.py
+
+
+class Person(models.Model):
+    name = models.CharField(max_length=40)
+    age = models.PositiveIntegerField()
+    age_group = models.CharField(
+        max_length=20,
+        default='"No age group'
+    )
+
+    def __str__(self):
+        return f"Name: {self.name}"
+
+#Commands executed:
+#python manage.py makemigrations
+#python manage.py migrate
+#manage.py makemigrations main_app --name migrate_age_group --empty
+
+#result 0009_person.py
+#result 0010_migrate_age_group.py
+

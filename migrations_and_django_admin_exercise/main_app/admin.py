@@ -1,4 +1,4 @@
-from .models import EventRegistration, Movie, Student, Supplier, Course
+from .models import EventRegistration, Movie, Student, Supplier, Course, Person
 from django.contrib import admin
 
 
@@ -60,5 +60,10 @@ class CourseAdmin(admin.ModelAdmin):
             'fields': ('description', )
         })
     )
+
+
+@admin.register(Person)
+class AdminPerson(admin.ModelAdmin):
+    list_display = ('name', 'age', 'age_group')
 
 
