@@ -62,8 +62,5 @@ class CourseAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Person)
-class AdminPerson(admin.ModelAdmin):
-    list_display = ('name', 'age', 'age_group')
 
 
