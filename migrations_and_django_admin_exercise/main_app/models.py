@@ -124,8 +124,28 @@ class Person(models.Model):
 #Commands executed:
 #python manage.py makemigrations
 #python manage.py migrate
-#manage.py makemigrations main_app --name migrate_age_group --empty
+#python manage.py makemigrations main_app --name migrate_age_group --empty
 
 #result 0009_person.py
 #result 0010_migrate_age_group.py
 
+
+class Item(models.Model):
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+    quantity = models.PositiveIntegerField(default=1)
+    rarity = models.CharField(
+        max_length=20,
+        default='No rarity'
+    )
+
+#Commands executed:
+#python manage.py makemigrations
+#python manage.py migrate
+#python manage.py makemigrations main_app --name migrate_age_group --empty
+
+#result 00011_item.py
+#result 0010_migrate_rarity.py
