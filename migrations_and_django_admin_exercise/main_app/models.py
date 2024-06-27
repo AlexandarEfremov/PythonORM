@@ -149,3 +149,23 @@ class Item(models.Model):
 
 #result 00011_item.py
 #result 0010_migrate_rarity.py
+
+
+class Smartphone(models.Model):
+    brand = models.CharField(max_length=100)
+    price = models.DecimalField(
+        max_digits=100,
+        decimal_places=2,
+        default=0
+    )
+    category = models.CharField(
+        max_length=20,
+        default='No category'
+    )
+
+#Commands executed:
+#python manage.py makemigrations
+#python manage.py migrate
+
+#result 0013_smartphone.py
+#python manage.py makemigrations main_app --name migrate_age_group --empty
