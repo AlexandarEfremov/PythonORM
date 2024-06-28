@@ -169,3 +169,48 @@ class Smartphone(models.Model):
 
 #result 0013_smartphone.py
 #python manage.py makemigrations main_app --name migrate_age_group --empty
+
+
+class StatusChoice(models.TextChoices):
+    PENDING = 'P', 'Pending'
+    COMPLETED = 'CO', 'Completed'
+    CANCELLED = 'CA', 'Cancelled'
+
+
+class Order(models.Model):
+
+    product_name = models.CharField(max_length=30)
+    customer_name = models.CharField(max_length=100)
+    order_date = models.DateField()
+    status = models.CharField(
+        max_length=30,
+        choices=StatusChoice.choices
+    )
+    amount = models.PositiveIntegerField(
+        default=1
+    )
+    product_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+    total_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
+    warranty = models.CharField(
+        default='No warranty'
+    )
+    delivery = models.DateField(
+        blank=True,
+        null=True
+    )
+
+    # Commands executed:
+    # python manage.py makemigrations
+    # python manage.py migrate
+    # python manage.py makemigrations main_app --name migration_delivery_and_warranty --empty
+
+
+    #result 0015_order.py
+    #result 0016_migration_delivery_and_warranty.py
