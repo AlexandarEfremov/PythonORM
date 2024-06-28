@@ -63,13 +63,19 @@ def update_students_emails():
         student.email = new_email
         student.save()
 
+
+def truncate_students():
+    all_students = Student.objects.all()
+    all_students.delete()
+
 # Run and print your queries
 
 # 1. add_students()
 # 1a. print(Student.objects.all())
 # 2. print(get_students_info())
-
 #3. update_students_emails()
-#
 #3a. for student in Student.objects.all():
 #3b.     print(student.email)
+# 4. truncate_students()
+# 4a. print(Student.objects.all())
+# 4b. print(f"Number of students: {Student.objects.count()}")
