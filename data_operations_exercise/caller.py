@@ -6,7 +6,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
 # Import your models here
-from main_app.models import Pet, Artifact, Location, Car
+from main_app.models import Pet, Artifact, Location, Car, Task
 from main_app import apps
 
 
@@ -90,5 +90,23 @@ def delete_last_car():
     Car.objects.last().delete()
 
 
+########################################
+
+def show_unfinished_tasks():
+    unfinished_tasks = Task.objects.all().filter(is_finished=False)
+    return '\n'.join(f"Task - {task.title} needs to be done until {task.due_date}!" for task in unfinished_tasks)
 
 
+def complete_odd_tasks():
+    tasks = Task.objects.all()
+    for task in tasks:
+        if task.id % 2 != 0:
+            task.is_finished = True
+            task.save()
+
+
+def encode_and_replace(text: str, task_title: str):
+    decoded_text = ''.join(chr(ord(symbol) - 3) for symbol in text)
+    Task.objects.filter(title=task_title).update(description=decoded_text)
+
+encode_and_replace("Zdvk#wkh#glvkhv$", "Sample Task")
