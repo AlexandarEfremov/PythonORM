@@ -1,7 +1,7 @@
 import os
 import django
 
-from data_operations.main_app import apps
+from main_app import apps
 
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
