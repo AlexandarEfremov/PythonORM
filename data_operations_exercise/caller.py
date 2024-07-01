@@ -54,14 +54,9 @@ def delete_all_artifacts():
 
 def show_all_locations():
     result = ''
-    all_locations = Location.objects.all()
+    all_locations = Location.objects.all().order_by('-id')
 
-    sorted_populations = sorted(all_locations, key=lambda x: -x.population )
-
-    for location in sorted_populations:
-        result += f'{location.name} has a population of {location.population}!\n'
-
-    return result
+    return '\n'.join(f'{l.name} has a population of {l.population}!' for l in all_locations)
 
 
 def new_capital():
