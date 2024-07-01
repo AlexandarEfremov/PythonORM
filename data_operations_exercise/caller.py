@@ -6,7 +6,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
 # Import your models here
-from main_app.models import Pet, Artifact, Location
+from main_app.models import Pet, Artifact, Location, Car
 from main_app import apps
 
 
@@ -66,10 +66,29 @@ def new_capital():
 
 
 def get_capitals():
-    all_capitals = Location.objects.filter(is_capital=True)
-    return all_capitals
+    return Location.objects.filter(is_capital=True).values('name')
 
 
 def delete_first_location():
     Location.objects.first().delete()
+
+
+def apply_discount():
+    all_cars = Car.objects.all()
+    for car in all_cars:
+        percentage = sum(int(digit) for digit in str(car.year)) / 100
+        discount = float(car.price) * percentage
+        car.price_with_discount = float(car.price) - discount
+        car.save()
+
+
+def get_recent_cars():
+    return Car.objects.filter(year__gt=2020).values('model', 'price_with_discount')
+
+
+def delete_last_car():
+    Car.objects.last().delete()
+
+
+
 
