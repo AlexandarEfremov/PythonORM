@@ -6,7 +6,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
 # Import your models here
-from main_app.models import Pet, Artifact, Location, Car, Task
+from main_app.models import Pet, Artifact, Location, Car, Task, HotelRoom
 from main_app import apps
 
 
@@ -109,4 +109,44 @@ def encode_and_replace(text: str, task_title: str):
     decoded_text = ''.join(chr(ord(symbol) - 3) for symbol in text)
     Task.objects.filter(title=task_title).update(description=decoded_text)
 
-encode_and_replace("Zdvk#wkh#glvkhv$", "Sample Task")
+
+#################################
+
+
+def get_deluxe_rooms():
+    all_rooms = HotelRoom.objects.all()
+    result = []
+    for room in all_rooms:
+        if room.id % 2 == 0 and room.room_type == 'Deluxe':
+            result.append(f"Deluxe room with number {room.room_number} costs {room.price_per_night}$ per night!")
+    return '\n'.join(result)
+
+
+def increase_room_capacity():
+    all_reserved_rooms = HotelRoom.objects.all().order_by('id')
+
+    previous_room_capacity = None
+
+    for room in all_reserved_rooms:
+        if not room.is_reserved:
+            continue
+
+        if previous_room_capacity is not None:
+            room.capacity += previous_room_capacity
+        else:
+            room.capacity += room.id
+        previous_room_capacity = room.capacity
+
+        room.save()
+
+
+def reserve_first_room():
+    room = HotelRoom.objects.first()
+    room.is_reserved = True
+    room.save()
+
+
+def delete_last_room():
+    last_room = HotelRoom.objects.last()
+    if not last_room.is_reserved:
+        HotelRoom.objects.last().delete()
