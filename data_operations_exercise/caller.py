@@ -6,7 +6,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
 # Import your models here
-from main_app.models import Pet, Artifact, Location, Car, Task, HotelRoom
+from main_app.models import Pet, Artifact, Location, Car, Task, HotelRoom, Character
 from main_app import apps
 
 
@@ -19,6 +19,7 @@ def create_pet(name: str, species: str):
     pet.save()
 
     return f"{name} is a very cute {species}!"
+
 
 # Create queries within functions
 
@@ -150,3 +151,61 @@ def delete_last_room():
     last_room = HotelRoom.objects.last()
     if not last_room.is_reserved:
         HotelRoom.objects.last().delete()
+
+
+#########################
+
+
+def update_characters():
+    all_chars = Character.objects.all()
+    updated_chars = []
+
+    for person in all_chars:
+        if person.class_name == "Mage":
+            person.level += 3
+            person.intelligence -= 7
+        elif person.class_name == "Warrior":
+            person.hit_points /= 2
+            person.dexterity += 4
+        elif person.class_name == "Scout" or person.class_name == "Assassin":
+            person.inventory = "The inventory is empty"
+        updated_chars.append(person)
+
+    if updated_chars:
+        fields_to_update = ['level', 'intelligence', 'hit_points', 'dexterity', 'inventory']
+        Character.objects.bulk_update(updated_chars, fields_to_update)
+
+
+def fuse_characters(first_character: Character, second_character: Character):
+    new_character = Character(
+        name=f'{first_character.name} {second_character.name}',
+        class_name="Fusion",
+        level=int((first_character.level + second_character.level) // 2),
+        strength=int((first_character.strength + second_character.strength) * 1.2),
+        dexterity=int((first_character.dexterity + second_character.dexterity) * 1.4),
+        intelligence=int((first_character.intelligence + second_character.intelligence) * 1.5),
+        hit_points=(first_character.hit_points + second_character.hit_points),
+        inventory=("Bow of the Elven Lords, Amulet of Eternal Wisdom" if first_character.class_name in ["Mage", "Scout"]
+                   else "Dragon Scale Armor, Excalibur")
+    )
+    new_character.save()
+    first_character.delete()
+    second_character.delete()
+
+
+def grand_dexterity():
+    Character.objects.all().update(dexterity=30)
+
+
+def grand_intelligence():
+    Character.objects.all().update(intelligence=40)
+
+
+def grand_strength():
+    Character.objects.all().update(strength=50)
+
+
+def delete_characters():
+    Character.objects.all().filter(inventory="The inventory is empty").delete()
+
+
