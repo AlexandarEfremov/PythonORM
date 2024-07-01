@@ -1,14 +1,13 @@
 import os
 import django
 
-from main_app import apps
-
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
 # Import your models here
 from main_app.models import Pet, Artifact
+from main_app import apps
 
 
 def create_pet(name: str, species: str):

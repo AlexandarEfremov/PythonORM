@@ -11,7 +11,7 @@ class Artifact(models.Model):
     origin = models.CharField(max_length=70)
     age = models.PositiveIntegerField()
     description = models.TextField()
-    is_magical = models.BooleanField(default=True)
+    is_magical = models.BooleanField(default=False)
 
 
 # Create your models here.
