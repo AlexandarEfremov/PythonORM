@@ -103,3 +103,12 @@ def filter_authors_by_nationalities(auth_nationality: str):
 
     return '\n'.join([author.biography if author.biography else f"{author.first_name} {author.last_name}"
                       for author in results])
+
+
+#Problem 6: Lookup keys
+
+
+def filter_authors_by_birth_year(year_one: str, year_two: str):
+    matches = Author.objects.filter(birth_date__year__range=(year_one, year_two)).order_by('-birth_date')
+    return '\n'.join([f"{a.birth_date}: {a.first_name} {a.last_name}" for a in matches])
+
