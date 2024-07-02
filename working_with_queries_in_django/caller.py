@@ -85,3 +85,12 @@ def order_books_by_year():
     return '\n'.join([f"{book.publication_year} year: {book.title} by {book.author}" for book in results])
 
 
+#Problem 4: Deleting review by ID
+
+
+def delete_review_by_id(id_int: str):
+    reviewer_name = Review.objects.get(id=id_int).reviewer_name
+    Review.objects.get(id=id_int).delete()
+
+    return f"Review by {reviewer_name} was deleted"
+
