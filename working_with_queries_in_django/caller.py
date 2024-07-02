@@ -69,4 +69,11 @@ def find_books_by_genre_and_language(genre: str, language: str):
 
 ###################
 
+#Problem 2: Return nationalaties that are not null
+
+
+def find_authors_nationalities():
+    results = Author.objects.exclude(nationality__isnull=True)
+    feed = [f"{a.first_name} {a.last_name} is {a.nationality}" for a in results]
+    return '\n'.join(feed)
 
