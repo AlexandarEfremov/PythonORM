@@ -77,3 +77,11 @@ def find_authors_nationalities():
     feed = [f"{a.first_name} {a.last_name} is {a.nationality}" for a in results]
     return '\n'.join(feed)
 
+#Problem 3: Return books in correct order
+
+
+def order_books_by_year():
+    results = Book.objects.order_by('publication_year', 'title')
+    return '\n'.join([f"{book.publication_year} year: {book.title} by {book.author}" for book in results])
+
+
