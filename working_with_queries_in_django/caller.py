@@ -67,7 +67,7 @@ from main_app.models import Author, Book, Review
 def find_books_by_genre_and_language(genre: str, language: str):
     return Book.objects.filter(genre=genre, language=language)
 
-###################
+
 
 #Problem 2: Return nationalaties that are not null
 
@@ -94,3 +94,12 @@ def delete_review_by_id(id_int: str):
 
     return f"Review by {reviewer_name} was deleted"
 
+
+#Problem 5: Authors info chained query
+
+
+def filter_authors_by_nationalities(auth_nationality: str):
+    results = Author.objects.filter(nationality=auth_nationality).order_by('first_name', 'last_name')
+
+    return '\n'.join([author.biography if author.biography else f"{author.first_name} {author.last_name}"
+                      for author in results])
