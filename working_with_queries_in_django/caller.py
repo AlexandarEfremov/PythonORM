@@ -112,3 +112,11 @@ def filter_authors_by_birth_year(year_one: str, year_two: str):
     matches = Author.objects.filter(birth_date__year__range=(year_one, year_two)).order_by('-birth_date')
     return '\n'.join([f"{a.birth_date}: {a.first_name} {a.last_name}" for a in matches])
 
+
+#Problem 7: Bulk operations
+
+
+def change_reviewer_name(rev_name, new_rev_name):
+    Review.objects.filter(reviewer_name=rev_name).update(reviewer_name=new_rev_name)
+    result = Review.objects.all()
+    return result
