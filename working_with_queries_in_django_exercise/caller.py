@@ -26,18 +26,7 @@ def delete_negative_rated_arts():
     ArtworkGallery.objects.filter(rating__lt=0).delete()
 
 
-artwork1 = ArtworkGallery(artist_name='Vincent van Gogh', art_name='Starry Night',
+#2. Laptop
 
-rating=4, price=1200000.0)
 
-artwork2 = ArtworkGallery(artist_name='Leonardo da Vinci', art_name='Mona Lisa',
 
-rating=5, price=1500000.0)
-
-# Bulk saves the instances
-
-bulk_create_arts(artwork1, artwork2)
-
-print(show_highest_rated_art())
-
-print(ArtworkGallery.objects.all())
