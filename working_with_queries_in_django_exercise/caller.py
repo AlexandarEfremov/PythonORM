@@ -3,12 +3,11 @@ from typing import List
 
 import django
 
-
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
-from main_app.models import ChessPlayer, ArtworkGallery, Laptop, OSChoices, Meal, Dungeon
+from main_app.models import ChessPlayer, ArtworkGallery, Laptop, OSChoices, Meal, Dungeon, Workout
 
 
 # Import your models
@@ -28,6 +27,7 @@ def bulk_create_arts(first_art: ArtworkGallery, second_art: ArtworkGallery):
 
 def delete_negative_rated_arts():
     ArtworkGallery.objects.filter(rating__lt=0).delete()
+
 
 #3.Chess
 
@@ -65,6 +65,7 @@ def grand_chess_title_FM():
 
 def grand_chess_title_regular_player():
     ChessPlayer.objects.filter(rating__range=(0, 2199)).update(title="regular player")
+
 
 #2.Laptop
 
@@ -165,5 +166,34 @@ def set_new_locations():
     Dungeon.objects.filter(recommended_level=75).update(location="Shadowed Abyss")
 
 
+#6.Workout
 
+
+def show_workouts():
+    obj = Workout.objects.filter(workout_type__in=("Calisthenics", "CrossFit")).order_by('id')
+    return '\n'.join(f"{w.name} from {w.workout_type} type has {w.difficulty} difficulty!" for w in obj)
+
+
+def get_high_difficulty_cardio_workouts():
+    return Workout.objects.filter(workout_type='Cardio', difficulty='High').order_by('instructor')
+
+
+def set_new_instructors():
+    Workout.objects.filter(workout_type='Cardio').update(instructor='John Smith')
+    Workout.objects.filter(workout_type='Strength').update(instructor='Michael Williams')
+    Workout.objects.filter(workout_type='Yoga').update(instructor='Emily Johnson')
+    Workout.objects.filter(workout_type='CrossFit').update(instructor='Sarah Davis')
+    Workout.objects.filter(workout_type='Calisthenics').update(instructor='Chris Heria')
+
+
+def set_new_duration_times():
+    Workout.objects.filter(instructor="John Smith").update(duration="15 minutes")
+    Workout.objects.filter(instructor="Sarah Davis").update(duration="30 minutes")
+    Workout.objects.filter(instructor="Chris Heria").update(duration="45 minutes")
+    Workout.objects.filter(instructor="Michael Williams").update(duration="1 hour")
+    Workout.objects.filter(instructor="Emily Johnson").update(duration="1 hour and 30 minutes")
+
+
+def delete_workouts():
+    Workout.objects.exclude(workout_type__in=("Strength", "Calisthenics")).delete()
 
