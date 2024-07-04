@@ -71,7 +71,6 @@ class ArtworkGallery(models.Model):
         decimal_places=2,
     )
 
-
 class BrandChoices(models.TextChoices):
     ASUS = 'Asus', 'Asus'
     ACER = 'Acer', 'Acer'
