@@ -8,12 +8,14 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
-from main_app.models import ChessPlayer, ArtworkGallery, Laptop, OSChoices
+from main_app.models import ChessPlayer, ArtworkGallery, Laptop, OSChoices, Meal
 
 
 # Import your models
 # Create and check models
 # Run and print your queries
+
+#1.Art
 
 def show_highest_rated_art():
     high_art = ArtworkGallery.objects.order_by('-rating', 'id').first()
@@ -26,6 +28,8 @@ def bulk_create_arts(first_art: ArtworkGallery, second_art: ArtworkGallery):
 
 def delete_negative_rated_arts():
     ArtworkGallery.objects.filter(rating__lt=0).delete()
+
+#3.Chess
 
 def bulk_create_chess_players(args: List[ChessPlayer]):
     ChessPlayer.objects.bulk_create(args)
@@ -62,6 +66,9 @@ def grand_chess_title_FM():
 def grand_chess_title_regular_player():
     ChessPlayer.objects.filter(rating__range=(0, 2199)).update(title="regular player")
 
+#2.Laptop
+
+
 def show_the_most_expensive_laptop():
     most_ex = Laptop.objects.order_by('-price', '-id').first()
     return f'{most_ex.brand} is the most expensive laptop available for {most_ex.price}$!'
@@ -88,3 +95,34 @@ def update_operation_systems():
 
 def delete_inexpensive_laptops():
     Laptop.objects.filter(price__lt=1200).delete()
+
+
+#4.Meal
+
+
+def set_new_chefs():
+    Meal.objects.filter(meal_type='Breakfast').update(chef="Gordon Ramsay")
+    Meal.objects.filter(meal_type='Lunch').update(chef="Julia Child")
+    Meal.objects.filter(meal_type='Dinner').update(chef="Jamie Oliver")
+    Meal.objects.filter(meal_type='Snack').update(chef="Thomas Keller")
+
+
+def set_new_preparation_times():
+    Meal.objects.filter(meal_type='Breakfast').update(preparation_time="10 minutes")
+    Meal.objects.filter(meal_type='Lunch').update(preparation_time="12 minutes")
+    Meal.objects.filter(meal_type='Dinner').update(preparation_time="15 minutes")
+    Meal.objects.filter(meal_type='Snack').update(preparation_time="5 minutes")
+
+
+def update_low_calorie_meals():
+    Meal.objects.filter(meal_type__in=('Breakfast', 'Dinner')).update(calories=400)
+
+
+def update_high_calorie_meals():
+    Meal.objects.filter(meal_type__in=('Lunch', 'Snack')).update(calories=700)
+
+
+def delete_lunch_and_snack_meals():
+    Meal.objects.filter(meal_type__in=('Lunch', 'Snack')).delete()
+
+
