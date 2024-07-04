@@ -1,5 +1,4 @@
 import os
-from typing import List
 
 import django
 
@@ -10,7 +9,7 @@ django.setup()
 
 
 from main_app.models import ArtworkGallery, Laptop
-
+from typing import List
 
 #1. Artwork Gallery
 
@@ -59,7 +58,7 @@ def update_operation_systems():
             pc.operation_system = 'Linux'
         else:
             pc.operation_system = 'Chrome OS'
-        pc.save()
+    Laptop.objects.bulk_update(all_pcs, ['operations_system'])
 
 
 def delete_inexpensive_laptops():
