@@ -1,5 +1,5 @@
 import os
-
+from typing import List
 import django
 
 
@@ -8,8 +8,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
 
-from main_app.models import ArtworkGallery, Laptop
-from typing import List
+from main_app.models import ArtworkGallery, Laptop, OSChoices, ChessPlayer
+
 
 #1. Artwork Gallery
 
@@ -48,65 +48,50 @@ def update_to_16_GB_memory():
 
 
 def update_operation_systems():
-    all_pcs = Laptop.objects.all()
-    for pc in all_pcs:
-        if pc.brand == 'Asus':
-            pc.operation_system = 'Windows'
-        elif pc.brand == 'Apple':
-            pc.operation_system = 'MacOS'
-        elif pc.brand in ['Dell', 'Acer']:
-            pc.operation_system = 'Linux'
-        else:
-            pc.operation_system = 'Chrome OS'
-    Laptop.objects.bulk_update(all_pcs, ['operations_system'])
+    Laptop.objects.filter(brand="Asus").update(operation_system=OSChoices.WINDOWS)
+    Laptop.objects.filter(brand="Apple").update(operation_system=OSChoices.MACOS)
+    Laptop.objects.filter(brand__in=("Dell", "Acer")).update(operation_system=OSChoices.LINUX)
+    Laptop.objects.filter(brand="Lenovo").update(operation_system=OSChoices.CHROME_OS)
 
 
 def delete_inexpensive_laptops():
     Laptop.objects.filter(price__lt=1200).delete()
 
 
-# laptop1 = Laptop(
-#
-#     brand='Asus',
-#
-#     processor='Intel Core i5',
-#
-#     memory=8,
-#
-#     storage=256,
-#
-#     operation_system='MacOS',
-#
-#     price=899.99
-# )
-#
-# laptop2 = Laptop(
-#     brand='Apple',
-#     processor='Chrome OS',
-#     memory=16, storage=256,
-#     operation_system='MacOS',
-#     price=1399.99 )
-#
-# laptop3 = Laptop(
-#     brand='Lenovo',
-#     processor='AMD Ryzen 7',
-#     memory=12,
-#     storage=256,
-#     operation_system='Linux',
-#     price=999.99,
-# )
-#
-#
-# laptops_to_create = [laptop1, laptop2, laptop3]
-#
-# bulk_create_laptops(laptops_to_create)
-#
-# update_to_512_GB_storage()
-#
-# update_operation_systems()
-#
-# asus_laptop = Laptop.objects.filter(brand__exact='Asus').get()
-# lenovo_laptop = Laptop.objects.filter(brand__exact='Lenovo').get()
-# print(asus_laptop.storage)
-# print(lenovo_laptop.operation_system)
+#3. Chess
 
+
+def bulk_create_chess_players(args: List[ChessPlayer]):
+    ChessPlayer.objects.bulk_create(args)
+
+
+def delete_chess_players():
+    ChessPlayer.objects.filter(title='no title').delete()
+
+
+def change_chess_games_won():
+    ChessPlayer.objects.filter(title='GM').update(games_won=30)
+
+
+def change_chess_games_lost():
+    ChessPlayer.objects.filter(title='no title').update(games_lost=25)
+
+
+def change_chess_games_drawn():
+    ChessPlayer.objects.update(games_drawn=10)
+
+
+def grand_chess_title_GM():
+    ChessPlayer.objects.filter(rating__gte=2400).update(title='GM')
+
+
+def grand_chess_title_IM():
+    ChessPlayer.objects.filter(rating__range=(2399, 2300)).update(title='IM')
+
+
+def grand_chess_title_FM():
+    ChessPlayer.objects.filter(rating__range=(2299, 2200)).update(title='FM')
+
+
+def grand_chess_title_regular_player():
+    ChessPlayer.objects.filter(rating__range=(2299, 0)).update(title="regular player")
