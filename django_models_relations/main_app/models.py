@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 
 
@@ -27,6 +29,9 @@ class Subject(models.Model):
         null=True
     )
 
+    def __str__(self):
+        return f'{self.name}'
+
 
 class Student(models.Model):
     student_id = models.CharField(
@@ -43,5 +48,33 @@ class Student(models.Model):
     email = models.EmailField(
         unique=True,
     )
-    subjects = models.ManyToManyField(Subject)
+    subjects = models.ManyToManyField(
+        Subject,
+        through='StudentEnrollment')
+
+
+class StudentEnrollment(models.Model):
+    class GradeChoices(models.TextChoices):
+        A = 'A', 'A'
+        B = 'B', 'B'
+        C = 'C', 'C'
+        D = 'D', 'D'
+        F = 'F', 'F'
+
+    student = models.ForeignKey(
+        to='Student',
+        on_delete=models.CASCADE,
+    )
+    subject = models.ForeignKey(
+        to='Subject',
+        on_delete=models.CASCADE,
+    )
+    enrollment_date = models.DateField(
+        default=date.today,
+    )
+    grade = models.CharField(
+        max_length=1,
+        choices=GradeChoices,
+    )
+
 # Create your models here.
