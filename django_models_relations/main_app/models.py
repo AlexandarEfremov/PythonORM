@@ -77,4 +77,22 @@ class StudentEnrollment(models.Model):
         choices=GradeChoices,
     )
 
+
+class LecturerProfile(models.Model):
+    lecturer = models.OneToOneField(
+        to='Lecturer',
+        on_delete=models.CASCADE,
+    )
+    email = models.EmailField(
+        unique=True,
+    )
+    bio = models.TextField(
+        blank=True,
+        null=True,
+    )
+    office_location = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
 # Create your models here.
