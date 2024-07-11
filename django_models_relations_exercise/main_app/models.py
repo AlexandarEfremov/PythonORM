@@ -58,4 +58,27 @@ class Review(models.Model):
     )
 
 
+class Driver(models.Model):
+    first_name = models.CharField(
+        max_length=50,
+    )
+    last_name = models.CharField(
+        max_length=50,
+    )
+
+
+class DrivingLicense(models.Model):
+    license_number = models.CharField(
+        max_length=10,
+        unique=True,
+    )
+    issue_date = models.DateField()
+    driver = models.OneToOneField(
+        to=Driver,
+        on_delete=models.CASCADE,
+        related_name='license'
+    )
+
+
+
 # Create your models here.
