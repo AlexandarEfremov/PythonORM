@@ -31,4 +31,43 @@ class Reptile(Animal):
     scale_type = models.CharField(
         max_length=50,
     )
+
+
+class Employee(models.Model):
+    first_name = models.CharField(
+        max_length=50,
+    )
+    last_name = models.CharField(
+        max_length=50,
+    )
+    phone_number = models.CharField(
+        max_length=10,
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Choices(models.TextChoices):
+    MAMMALS = 'Mammals', 'Mammals'
+    BIRDS = 'Birds', 'Birds'
+    REPTILES = 'Reptiles', 'Reptiles'
+    OTHERS = 'Others', 'Others'
+
+
+class ZooKeeper(Employee):
+    specialty = models.CharField(
+        max_length=10,
+        choices=Choices
+    )
+    managed_animals = models.ManyToManyField(
+        to=Animal,
+    )
+
+
+class Veterinarian(Employee):
+    license_number = models.CharField(
+        max_length=10
+    )
+
 # Create your models here.
