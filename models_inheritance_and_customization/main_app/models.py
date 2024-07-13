@@ -78,6 +78,14 @@ class Veterinarian(Employee):
 
 
 class ZooDisplayAnimal(Animal):
+    def display_info(self):
+        return f"Meet {self.name}! Species: {self.species}, born {self.birth_date}. It makes a noise like '{self.sound}'."
+
+    def is_endangered(self):
+        if self.species in ["Cross River Gorilla", "Orangutan", "Green Turtle"]:
+            return f"{self.species} is at risk!"
+        return f"{self.species} is not at risk."
+
     class Meta:
         proxy = True
 # Create your models here.
