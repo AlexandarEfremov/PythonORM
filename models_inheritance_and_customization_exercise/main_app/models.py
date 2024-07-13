@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -191,4 +193,101 @@ class CreditCard(models.Model):
         max_length=100,
     )
     card_number = MaskedCreditCardField()
-# Create your models here.
+
+
+class Hotel(models.Model):
+    name = models.CharField(
+        max_length=100,
+    )
+    address = models.CharField(
+        max_length=200,
+    )
+
+
+class Room(models.Model):
+    hotel = models.ForeignKey(
+        to='Hotel',
+        on_delete=models.CASCADE,
+    )
+    number = models.CharField(
+        max_length=100,
+        unique=True,
+    )
+    capacity = models.PositiveIntegerField()
+    total_guests = models.PositiveIntegerField()
+    price_per_night = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+    )
+
+    def clean(self):
+        if self.total_guests > self.capacity:
+            raise ValidationError("Total guests are more than the capacity of the room")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, *kwargs)
+        return f"Room {self.number} created successfully"
+
+
+class BaseReservation(models.Model):
+    room = models.ForeignKey(
+        to='Room',
+        on_delete=models.CASCADE,
+    )
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    def reservation_period(self):
+        delta = self.end_date - self.end_date
+        return delta.days
+
+    def calculate_total_cost(self):
+        price = round((self.reservation_period() * self.room.price_per_night), 2)
+        return price
+
+    @property
+    def is_available(self):
+        res = self.__class__.objects.filter(
+            room=self.room,
+            end_date__gte=self.start_date,
+            start_date__lte=self.end_date,
+        )
+
+        return not res.exists()
+
+    def clean(self):
+        if self.start_date >= self.end_date:
+            raise ValidationError("Start date cannot be after or in the same end date")
+
+        if not self.is_available:
+            raise ValidationError(f"Room {self.room.number} cannot be reserved")
+
+    class Meta:
+        abstract = True
+
+
+class RegularReservation(BaseReservation):
+    def save(self, *args, **kwargs):
+        super().clean()
+        super().save(*args, **kwargs)
+
+        return f"Regular reservation for room {self.room.number}"
+
+
+class SpecialReservation(BaseReservation):
+    def save(self, *args, **kwargs):
+        super().clean()
+        super().save(*args, **kwargs)
+
+        return f"Special reservation for room {self.room.number}"
+
+    def extend_reservation(self, days: int):
+        self.end_date += timedelta(days=days)
+        if not self.is_available:
+            raise ValidationError("Error during extending reservation")
+        else:
+            self.save()
+
+        return f"Extended reservation for room {self.room.number} with {days} days"
+    # Create your models here.
