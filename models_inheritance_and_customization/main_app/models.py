@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -18,8 +18,10 @@ class Animal(models.Model):
 
     @property
     def age(self):
-        today = datetime.today()
-        age = today.year - self.birth_date.year
+        today = date.today()
+        age = today.year - self.birth_date.year - (
+                (today.month, today.day) <
+                (self.birth_date.month, self.birth_date.day))
         return age
 
 
