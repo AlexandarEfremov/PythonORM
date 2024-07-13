@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.core.exceptions import ValidationError
 
@@ -13,6 +15,12 @@ class Animal(models.Model):
     sound = models.CharField(
         max_length=100,
     )
+
+    @property
+    def age(self):
+        today = datetime.today()
+        age = today.year - self.birth_date.year
+        return age
 
 
 class Mammal(Animal):
