@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class Animal(models.Model):
@@ -48,21 +49,26 @@ class Employee(models.Model):
         abstract = True
 
 
-class Choices(models.TextChoices):
-    MAMMALS = 'Mammals', 'Mammals'
-    BIRDS = 'Birds', 'Birds'
-    REPTILES = 'Reptiles', 'Reptiles'
-    OTHERS = 'Others', 'Others'
-
-
 class ZooKeeper(Employee):
+    class SPECIALITIES(models.TextChoices):
+        MAMMALS = 'Mammals', 'Mammals'
+        BIRDS = 'Birds', 'Birds'
+        REPTILES = 'Reptiles', 'Reptiles'
+        OTHERS = 'Others', 'Others'
+
     specialty = models.CharField(
         max_length=10,
-        choices=Choices
+        choices=SPECIALITIES
     )
     managed_animals = models.ManyToManyField(
         to=Animal,
     )
+
+    def clean(self):
+        if self.specialty not in self.SPECIALITIES:
+            raise ValidationError(
+                "Specialty must be a valid choice."
+            )
 
 
 class Veterinarian(Employee):
