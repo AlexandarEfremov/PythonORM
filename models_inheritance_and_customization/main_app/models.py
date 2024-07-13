@@ -70,4 +70,8 @@ class Veterinarian(Employee):
         max_length=10
     )
 
+
+class ZooDisplayAnimal(Animal):
+    class Meta:
+        proxy = True
 # Create your models here.
