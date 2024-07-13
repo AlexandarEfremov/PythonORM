@@ -126,18 +126,21 @@ class Message(models.Model):
             receiver=self.sender,
             content=reply_content,
         )
+
         message.save()
+
         return message
 
     def forward_message(self, receiver: UserProfile):
         message = Message(
             sender=self.receiver,
             receiver=receiver,
+            content=self.content,
         )
 
         message.save()
-        return message
 
+        return message
 
 
 
