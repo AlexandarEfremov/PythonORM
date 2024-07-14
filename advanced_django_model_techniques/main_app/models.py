@@ -79,12 +79,12 @@ class RegularRestaurantReview(RestaurantReview):
     pass
 
 
-class FoodCriticRestaurantReview(RestaurantReview.Meta):
+class FoodCriticRestaurantReview(RestaurantReview):
     food_critic_cuisine_area = models.CharField(
         max_length=100,
     )
 
-    class Meta:
+    class Meta(RestaurantReview.Meta):
         verbose_name = "Food Critic Review"
         verbose_name_plural = "Food Critic Reviews"
 
