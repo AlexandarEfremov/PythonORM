@@ -68,10 +68,26 @@ class RestaurantReview(models.Model):
     )
 
     class Meta:
+        abstract = True
         ordering = ['-rating']
         verbose_name = "Restaurant Review"
         verbose_name_plural = "Restaurant Reviews"
         unique_together = ["reviewer_name", "restaurant"]
+
+
+class RegularRestaurantReview(RestaurantReview):
+    pass
+
+
+class FoodCriticRestaurantReview(RestaurantReview.Meta):
+    food_critic_cuisine_area = models.CharField(
+        max_length=100,
+    )
+
+    class Meta:
+        verbose_name = "Food Critic Review"
+        verbose_name_plural = "Food Critic Reviews"
+
 
 
 
