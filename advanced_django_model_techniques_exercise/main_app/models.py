@@ -121,6 +121,9 @@ class Product(models.Model):
 
 
 class DiscountedProduct(Product):
+    class Meta:
+        proxy = True
+
     def calculate_price_without_discount(self):
         return self.price + (self.price * Decimal(0.2))
 
