@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Q
 
 
 def product_quantity_ordered():
@@ -20,6 +20,16 @@ def ordered_products_per_customer():
         result.append(f"Order ID: {order.id}, Customer: {order.customer.username}")
         for order_product in order.orderproduct_set.all():
             result.append(f"- Product: {order_product.product.name}, Category: {order_product.product.category.name}")
+    return "\n".join(result)
+
+
+def filter_products():
+    query = Q(is_available=True) & Q(price__gt=3.00)
+    products = Product.objects.filter(query).order_by('-price', 'name')
+    result = []
+    for p in products:
+        result.append(f"{p.name}: {p.price}lv.")
+
     return "\n".join(result)
 
 
