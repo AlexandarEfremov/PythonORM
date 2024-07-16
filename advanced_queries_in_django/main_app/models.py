@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Count, Sum, Q
+from django.db.models import Count, Sum, Q, F
 
 
 def product_quantity_ordered():
@@ -29,6 +29,22 @@ def filter_products():
     result = []
     for p in products:
         result.append(f"{p.name}: {p.price}lv.")
+
+    return "\n".join(result)
+
+
+def give_discount():
+    reduction = F('price') * 0.7
+    query = Q(is_available=True) & Q(price__gt=3.0)
+
+    Product.objects.filter(query).update(price=reduction)
+
+    val_returned = Product.objects.filter(is_available=True).order_by('-price', 'name')
+
+    result = []
+
+    for i in val_returned:
+        result.append(f"{i.name}: {i.price}lv.")
 
     return "\n".join(result)
 
