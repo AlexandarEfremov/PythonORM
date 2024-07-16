@@ -1,4 +1,16 @@
 from django.db import models
+from django.db.models import Count, Sum
+
+
+def product_quantity_ordered():
+    result = []
+    orders = Product.objects.annotate(total=Sum(
+        'orderproduct__quantity'
+    )).values('name', 'total').exclude(total=None).order_by('-total')
+
+    for order in orders:
+        result.append(f"Quantity ordered of {order['name']}: {order['total']}")
+    return '\n'.join(result)
 
 
 class Category(models.Model):
