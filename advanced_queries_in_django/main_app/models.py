@@ -13,6 +13,16 @@ def product_quantity_ordered():
     return '\n'.join(result)
 
 
+def ordered_products_per_customer():
+    pre_orders = Order.objects.prefetch_related('orderproduct_set__product__category').order_by('id')
+    result = []
+    for order in pre_orders:
+        result.append(f"Order ID: {order.id}, Customer: {order.customer.username}")
+        for order_product in order.orderproduct_set.all():
+            result.append(f"- Product: {order_product.product.name}, Category: {order_product.product.category.name}")
+    return "\n".join(result)
+
+
 class Category(models.Model):
     name = models.CharField(max_length=100)
 
