@@ -190,5 +190,4 @@ class FlashHero(Hero):
         return f"{self.name} as Flash Hero runs at lightning speed, saving the day"
 
 
-
 # Create your models here.
