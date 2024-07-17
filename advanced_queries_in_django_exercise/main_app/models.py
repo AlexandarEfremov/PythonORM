@@ -10,15 +10,15 @@ class RealEstateListingManager(models.Manager):
         return self.filter(property_type=property_type).all()
 
     def in_price_range(self, min_price: Decimal, max_price: Decimal):
-        return self.filter(price__range=(min_price, max_price)).all()
+        return self.filter(price__range=(min_price, max_price))
 
     def with_bedrooms(self, bedrooms_count: int):
-        return self.filter(bedrooms=bedrooms_count).all()
+        return self.filter(bedrooms=bedrooms_count)
 
     def popular_locations(self):
         return (self.values('location').
                 annotate(location_count=Count('location')).
-                order_by('location'))[:2]
+                order_by('-location_count', 'location'))[:2]
 
 
 class RealEstateListing(models.Model):
