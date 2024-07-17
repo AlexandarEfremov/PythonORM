@@ -1,7 +1,8 @@
 from decimal import Decimal
 
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.db.models import Count
+from django.db.models import Count, Avg
 
 
 # Create your models here.
@@ -38,6 +39,24 @@ class RealEstateListing(models.Model):
     objects = RealEstateListingManager()
 
 
+class VideoGameManager(models.Manager):
+    def games_by_genre(self, genre: str):
+        return self.filter(genre=genre)
+
+    def recently_released_games(self, year: int):
+        return self.filter(release_year__gte=year)
+
+    def highest_rated_game(self):
+        return self.order_by('-rating').first()
+
+    def lowest_rated_game(self):
+        return self.order_by('rating').first()
+
+    def average_rating(self):
+        data = self.aggregate(average_rating=Avg('rating'))['average_rating']
+        return f'{data:.1f}'
+
+
 class VideoGame(models.Model):
     GENRE_CHOICES = [
         ('Action', 'Action'),
@@ -49,8 +68,22 @@ class VideoGame(models.Model):
 
     title = models.CharField(max_length=100)
     genre = models.CharField(max_length=100, choices=GENRE_CHOICES)
-    release_year = models.PositiveIntegerField()
-    rating = models.DecimalField(max_digits=2,decimal_places=1)
+    release_year = models.PositiveIntegerField(
+        validators=[
+            MinValueValidator(1990, message="The release year must be between 1990 and 2023"),
+            MaxValueValidator(2023, message="The release year must be between 1990 and 2023")
+        ]
+    )
+    rating = models.DecimalField(
+        max_digits=2,
+        decimal_places=1,
+        validators=[
+            MinValueValidator(0.0, message="The rating must be between 0.0 and 10.0"),
+            MaxValueValidator(10.0, message="The rating must be between 0.0 and 10.0")
+        ]
+    )
+
+    objects = VideoGameManager()
 
     def __str__(self):
         return self.title
