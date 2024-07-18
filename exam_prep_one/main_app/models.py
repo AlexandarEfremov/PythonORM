@@ -57,7 +57,7 @@ class Actor(models.Model):
     is_awarded = models.BooleanField(
         default=False
     )
-    last_updated = models.DateField(
+    last_updated = models.DateTimeField(
         auto_now=True,
     )
 
