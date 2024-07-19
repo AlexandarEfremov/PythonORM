@@ -22,7 +22,7 @@ class ActorAdmin(admin.ModelAdmin):
 class MovieAdmin(admin.ModelAdmin):
     list_display = ['title', 'storyline', 'rating', 'director']
     list_filter = ['is_awarded', 'is_classic', 'genre']
-    fields = ['title', ('first_name', 'last_name')]
+    search_fields = ['title', ('full_name', 'full_name')]
     readonly_fields = ['last_updated']
 
 # Register your models here.
