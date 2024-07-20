@@ -61,7 +61,11 @@ def get_top_actor():
 
 
 def get_actors_by_movies_count():
-    actors = Actor.objects.annotate(total_movies='starred_movies').order_by('-total_movies', 'full_name')[:2]
+    actors = Actor.objects.annotate(total_movies=Count('movie')).order_by('-total_movies', 'full_name')[:3]
 
-    result = [f"{act.full_name}, participated in {", ".join(movie.title for movie in act.starred_movies.all())} movies" for act in actors]
+    if not actors or not actors[0].total_movies:
+        return ''
+
+    result = [f"{act.full_name}, participated in {act.total_movies} movies"
+              for act in actors]
     return "\n".join(result)
