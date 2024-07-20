@@ -1,12 +1,11 @@
 import os
 import django
 
-
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
-from main_app.models import Director, Actor
+from main_app.models import Director, Actor, Movie
 from django.db.models import Q, Count, Avg
 
 
@@ -46,7 +45,6 @@ def get_top_director():
 
 
 def get_top_actor():
-
     obj = (Actor.objects.annotate(most_movies_starred=Count('starred_movies'))
            .order_by('-most_movies_starred', 'full_name').first())
     if not Actor.objects.exists():
@@ -69,3 +67,15 @@ def get_actors_by_movies_count():
     result = [f"{act.full_name}, participated in {act.total_movies} movies"
               for act in actors]
     return "\n".join(result)
+
+
+def get_top_rated_awarded_movie():
+    mo = Movie.objects.filter(is_awarded=True).order_by('-rating', 'title').first()
+
+    if not mo:
+        return ''
+
+    sa_name = mo.starring_actor.full_name if mo.starring_actor is not None else 'N/A'
+    cast = [act.full_name for act in mo.actors.all().order_by('full_name')]
+    return (f"Top rated awarded movie: {mo.title}, rating: {mo.rating}. Starring actor: {sa_name}. "
+            f"Cast: {', '.join(cast)}.")
