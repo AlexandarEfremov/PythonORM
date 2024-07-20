@@ -18,16 +18,19 @@ def get_directors(search_name=None, search_nationality=None):
     query_name = Q(full_name__icontains=search_name)
     query_nationality = Q(nationality__icontains=search_nationality)
 
+    query = ''
+
     if search_name is not None and search_nationality is not None:
         query = Q(query_name & query_nationality)
     elif search_name is None and search_nationality is not None:
         query = query_nationality
     elif search_name is not None and search_nationality is None:
         query = query_name
-    else:
-        return ''
 
     directors = Director.objects.filter(query).order_by('full_name')
+    if not directors:
+        return ''
+
     for d in directors:
         result.append(f"Director: {d.full_name}, nationality: {d.nationality}, "
                       f"experience: {d.years_of_experience}")
@@ -36,21 +39,24 @@ def get_directors(search_name=None, search_nationality=None):
 
 
 def get_top_director():
-    if Director.objects.all() is None:
+    obj = Director.objects.annotate(most_movies=Count('movie')).order_by('-most_movies', 'full_name').first()
+    if not obj:
         return ''
-    obj = Director.objects.annotate(most_movies=Count('movie')).order_by('full_name').first()
     return f"Top Director: {obj.full_name}, movies: {obj.most_movies}."
 
 
 def get_top_actor():
-    if Actor.objects.all() is None:
+
+    obj = (Actor.objects.annotate(most_movies_starred=Count('starred_movies'))
+           .order_by('-most_movies_starred', 'full_name').first())
+    if not Actor.objects.exists():
         return ''
-    if Actor.objects.annotate(most_movies_starred=Count('starred_movies')) is None:
+    if not obj or obj.most_movies_starred == 0:
         return ''
 
-    obj = Actor.objects.annotate(most_movies_starred=Count('starred_movies')).order_by('full_name').first()
-    obj_avg_rating = obj.starred_movies.annotate(avg_rating=Avg('rating'))
-    return (f"Top Actor: {obj.full_name}, starring in movies: {", ".join(m.starred_movies.title for m in obj)}, "
-            f"movies average rating: {obj_avg_rating:.1f}")
+    obj_avg_rating = obj.starred_movies.aggregate(avg_rating=Avg('rating'))['avg_rating']
+    movie_titles = ", ".join(movie.title for movie in obj.starred_movies.all())
+
+    return f"Top Actor: {obj.full_name}, starring in movies: {movie_titles}, movies average rating: {obj_avg_rating:.1f}"
 
 
