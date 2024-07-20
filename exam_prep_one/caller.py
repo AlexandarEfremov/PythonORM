@@ -60,3 +60,8 @@ def get_top_actor():
     return f"Top Actor: {obj.full_name}, starring in movies: {movie_titles}, movies average rating: {obj_avg_rating:.1f}"
 
 
+def get_actors_by_movies_count():
+    actors = Actor.objects.annotate(total_movies='starred_movies').order_by('-total_movies', 'full_name')[:2]
+
+    result = [f"{act.full_name}, participated in {", ".join(movie.title for movie in act.starred_movies.all())} movies" for act in actors]
+    return "\n".join(result)
