@@ -6,7 +6,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
 from main_app.models import Director, Actor, Movie
-from django.db.models import Q, Count, Avg
+from django.db.models import Q, Count, Avg, F
 
 
 def get_directors(search_name=None, search_nationality=None):
@@ -79,3 +79,22 @@ def get_top_rated_awarded_movie():
     cast = [act.full_name for act in mo.actors.all().order_by('full_name')]
     return (f"Top rated awarded movie: {mo.title}, rating: {mo.rating}. Starring actor: {sa_name}. "
             f"Cast: {', '.join(cast)}.")
+
+
+def increase_rating():
+    mo = Movie.objects.filter(is_classic=True, rating__lt=10)
+
+    counter = 0
+
+    for movie in mo:
+        movie.update(rating=F('rating') + 0.1)
+        counter += 1
+
+    if counter == 0:
+        return "No ratings increased."
+    return f"Rating increased for {counter} movies."
+
+
+
+
+
