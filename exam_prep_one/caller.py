@@ -84,15 +84,13 @@ def get_top_rated_awarded_movie():
 def increase_rating():
     mo = Movie.objects.filter(is_classic=True, rating__lt=10)
 
-    counter = 0
-
-    for movie in mo:
-        movie.update(rating=F('rating') + 0.1)
-        counter += 1
-
-    if counter == 0:
+    if not mo.exists():
         return "No ratings increased."
-    return f"Rating increased for {counter} movies."
+
+    mo.update(rating=F('rating') + 0.1)
+    mo.filter(rating__gt=10).update(rating=10.0)
+
+    return f"Rating increased for {mo.count()} movies."
 
 
 
