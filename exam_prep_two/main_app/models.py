@@ -1,5 +1,11 @@
 from django.core.validators import MinLengthValidator, MaxLengthValidator, MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Count
+
+
+class ProfileManager(models.Manager):
+    def get_regular_customers(self):
+        return self.annotate(order_count=Count('order')).filter(order_count__gt=2).order_by('-order_count')
 
 
 class Profile(models.Model):
@@ -24,6 +30,8 @@ class Profile(models.Model):
     creation_date = models.DateTimeField(
         auto_now_add=True,
     )
+
+    objects = ProfileManager()
 
 
 class Product(models.Model):
