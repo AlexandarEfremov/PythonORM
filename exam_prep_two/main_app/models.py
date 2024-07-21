@@ -70,6 +70,7 @@ class Order(models.Model):
     )
     products = models.ManyToManyField(
         to='Product',
+        related_name='product_orders'
     )
     total_price = models.DecimalField(
         max_digits=10,

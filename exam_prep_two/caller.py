@@ -6,7 +6,7 @@ from django.db.models import Q, Count
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
-from main_app.models import Profile, Order
+from main_app.models import Profile, Order, Product
 
 
 def get_profiles(search_string=None):
@@ -43,4 +43,18 @@ def get_last_sold_products():
     all_prods = ', '.join([prod.name for prod in obj.products.all().order_by('name')])
     result = f"Last sold products: {all_prods}"
     return result
+
+
+def get_top_products():
+    obj = Product.objects.annotate(num_sold=Count('product_orders')).order_by('-num_sold', 'name')[:6]
+
+    if not obj:
+        return ''
+
+    result = ["Top products:"]
+
+    for prod in obj:
+        result.append(f"{prod.name}, sold {prod.num_sold} times")
+
+    return '\n'.join(result)
 
