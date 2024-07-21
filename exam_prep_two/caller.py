@@ -6,7 +6,7 @@ from django.db.models import Q, Count
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
-from main_app.models import Profile
+from main_app.models import Profile, Order
 
 
 def get_profiles(search_string=None):
@@ -32,4 +32,15 @@ def get_loyal_profiles():
     result = [f"Profile: {p.full_name}, orders: {p.total_orders}" for p in obj]
 
     return "\n".join(result)
+
+
+def get_last_sold_products():
+    obj = Order.objects.prefetch_related('products').order_by('products__name')
+
+    if not obj.exists():
+        return ''
+
+    all_prods = ', '.join([p.name for p in obj])
+    result = f"{'Last sold products: '}{all_prods}"
+    return result
 
