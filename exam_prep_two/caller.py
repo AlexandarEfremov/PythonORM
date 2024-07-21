@@ -26,3 +26,10 @@ def get_profiles(search_string=None):
 
     return "\n".join(result)
 
+
+def get_loyal_profiles():
+    obj = Profile.objects.annotate(total_orders=Count('order')).filter(total_orders__gt=2).order_by('-total_orders')
+    result = [f"Profile: {p.full_name}, orders: {p.total_orders}" for p in obj]
+
+    return "\n".join(result)
+
