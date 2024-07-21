@@ -35,12 +35,12 @@ def get_loyal_profiles():
 
 
 def get_last_sold_products():
-    obj = Order.objects.prefetch_related('products').order_by('products__name')
+    obj = Order.objects.order_by('-creation_date').prefetch_related('products').first()
 
-    if not obj.exists():
+    if not obj:
         return ''
 
-    all_prods = ', '.join([p.name for p in obj])
-    result = f"{'Last sold products: '}{all_prods}"
+    all_prods = ', '.join([prod.name for prod in obj.products.all().order_by('name')])
+    result = f"Last sold products: {all_prods}"
     return result
 
