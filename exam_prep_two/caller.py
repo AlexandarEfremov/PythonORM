@@ -57,8 +57,6 @@ def get_top_products():
     return ""
 
 
-
-
 def apply_discounts():
     obj = Order.objects.annotate(num_of_products=Count('products')).filter(num_of_products__gt=2, is_completed=False)
     discount = F('total_price') * Decimal('0.9')
@@ -67,5 +65,31 @@ def apply_discounts():
 
     if obj.count() != 0:
         return f"Discount applied to {obj.count()} orders."
-    f"Discount applied to {0} orders."
+    return "Discount applied to 0 orders."
+
+
+def complete_order():
+    obj = Order.objects.filter(is_completed=False).order_by('creation_date').first()
+
+    if obj:
+        for prod in obj.products.all():
+            if prod.in_stock - 1 >= 0:
+                prod.in_stock -= 1
+                if prod.in_stock == 0:
+                    prod.is_available = False
+            else:
+                prod.in_stock = 0
+                prod.is_available = False
+
+            prod.save()
+
+        obj.is_completed = True
+        obj.save()
+
+        return "Order has been completed!"
+
+    return ""
+
+
+
 
