@@ -5,7 +5,7 @@ from django.db.models import Q, Count
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
-from main_app.models import Author
+from main_app.models import Author, Review, Article
 
 
 def get_authors(search_name=None, search_email=None):
@@ -39,5 +39,13 @@ def get_top_publisher():
         return ""
 
     return f"Top Author: {obj.full_name} with {obj.num_art} published articles."
+
+
+def get_top_reviewer():
+    obj = Author.objects.annotate(num_reviews=Count("review")).order_by("-num_reviews", "email").first()
+    if not obj or obj.num_reviews == 0:
+        return ""
+
+    return f"Top Reviewer: {obj.full_name} with {obj.num_reviews} published reviews."
 
 
