@@ -1,5 +1,11 @@
 from django.core.validators import MinLengthValidator, MaxLengthValidator, MinValueValidator, MaxValueValidator
 from django.db import models
+from django.db.models import Count
+
+
+class AuthorManager(models.Manager):
+    def get_authors_by_article_count(self):
+        return self.annotate(number_of_art=Count('article')).order_by('-number_of_art', 'email')
 
 
 class Author(models.Model):
@@ -26,6 +32,8 @@ class Author(models.Model):
         blank=True,
         null=True,
     )
+
+    objects = AuthorManager()
 
 
 class CategoryChoices(models.TextChoices):
