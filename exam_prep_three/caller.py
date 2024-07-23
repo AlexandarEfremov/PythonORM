@@ -1,6 +1,6 @@
 import os
 import django
-from django.db.models import Q
+from django.db.models import Q, Count
 
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
@@ -31,5 +31,13 @@ def get_authors(search_name=None, search_email=None):
               for a in obj]
 
     return "\n".join(result)
+
+
+def get_top_publisher():
+    obj = Author.objects.annotate(num_art=Count('article')).order_by('-num_art', 'email').first()
+    if not obj:
+        return ""
+
+    return f"Top Author: {obj.full_name} with {obj.num_art} published articles."
 
 
