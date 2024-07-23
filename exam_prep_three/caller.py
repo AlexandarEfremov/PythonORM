@@ -35,7 +35,7 @@ def get_authors(search_name=None, search_email=None):
 
 def get_top_publisher():
     obj = Author.objects.annotate(num_art=Count('article')).order_by('-num_art', 'email').first()
-    if not obj:
+    if not obj or obj.num_art == 0:
         return ""
 
     return f"Top Author: {obj.full_name} with {obj.num_art} published articles."
