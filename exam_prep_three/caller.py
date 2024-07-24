@@ -42,7 +42,7 @@ def get_top_publisher():
 
 
 def get_top_reviewer():
-    obj = Author.objects.annotate(num_reviews=Count("review")).order_by("-num_reviews", "email").first()
+    obj = Author.objects.annotate(num_reviews=Count("reviews")).order_by("-num_reviews", "email").first()
     if not obj or obj.num_reviews == 0:
         return ""
 
@@ -50,13 +50,43 @@ def get_top_reviewer():
 
 
 def get_latest_article():
-    obj = (Article.objects.prefetch_related("authors", "review_set").
-           annotate(avg_rating=Avg('review_set__rating'), num_views=Count('review_set')).order_by(
-        "published_on").first())
-    if not obj or obj.rating is None:
-        return ""
+    article = Article.objects.annotate(
+        total_reviews=Count("reviews"),
+        avg_rating=Avg("reviews__rating")
+    ).order_by("-published_on").first()
 
-    return (f"The latest article is: {obj.title}. Authors: {', '.join(a.full_name for a in obj.authors.all().order_by('full_name'))}."
-            f" Reviewed: {obj.num_views} times. Average Rating: {obj.avg_rating}.")
+    if article:
+        authors = ", ".join(a.full_name for a in article.authors.all().order_by("full_name"))
+        avg = article.avg_rating or 0
+
+        return f"The latest article is: {article.title}. Authors: {authors}. Reviewed: {article.total_reviews} times." \
+               f" Average Rating: {avg:.2f}."
+
+    return ""
+
+# article = Article.objects.prefetch_related("authors", "reviews").order_by("-published_on").first()
+#
+#     if article:
+#
+#         authors = ", ".join(a.full_name for a in article.authors.all().order_by("full_name"))
+#         avg_rating = article.reviews.aggregate(avg_rating=Avg("rating"))["avg_rating"] or 0
+#         total_reviews = article.reviews.count()
+#
+#         return f"The latest article is: {article.title}. Authors: {authors}. Reviewed: {total_reviews} times." \
+#                f" Average Rating: {avg_rating:.2f}."
+#
+#     return ""
 
 
+    # latest_article = Article.objects.order_by('-published_on').first()
+    #
+    # if latest_article:
+    #     authors_names = ', '.join(sorted([author.full_name for author in latest_article.authors.all()]))
+    #
+    #     num_reviews = latest_article.reviews.count()
+    #     avg_rating = latest_article.reviews.aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0
+    #
+    #     return (f"The latest article is: {latest_article.title}. Authors: {authors_names}. "
+    #             f"Reviewed: {num_reviews} times. Average Rating: {avg_rating:.2f}.")
+    #
+    # return ""

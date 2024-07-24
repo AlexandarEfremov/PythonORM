@@ -24,8 +24,3 @@ class ReviewAdmin(admin.ModelAdmin):
     list_filter = ['rating', 'published_on']
     search_fields = ['article__title']
     readonly_fields = ['published_on']
-
-
-
-
-
