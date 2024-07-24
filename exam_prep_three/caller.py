@@ -50,10 +50,13 @@ def get_top_reviewer():
 
 
 def get_latest_article():
-    obj = Article.objects.annotate(avg_rating=Avg('review__rating'), num_views=Count('review')).order_by(
-        "published_on").first()
+    obj = (Article.objects.prefetch_related("authors", "review_set").
+           annotate(avg_rating=Avg('review_set__rating'), num_views=Count('review_set')).order_by(
+        "published_on").first())
     if not obj or obj.rating is None:
         return ""
 
-    return (f"The top-rated article is: {obj.title}, with an average rating of {obj.avg_rating:.2f}, "
-            f"reviewed {obj.num_views} times.")
+    return (f"The latest article is: {obj.title}. Authors: {', '.join(a.full_name for a in obj.authors.all().order_by('full_name'))}."
+            f" Reviewed: {obj.num_views} times. Average Rating: {obj.avg_rating}.")
+
+

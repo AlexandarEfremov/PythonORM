@@ -21,7 +21,7 @@ def get_profiles(search_string=None):
     obj = Profile.objects.filter(query).annotate(total_orders=Count('order')).order_by('full_name')
 
     if not obj:
-        return ""
+        return
 
     result = [(f"Profile: {p.full_name}, email: {p.email}, phone number: {p.phone_number}, orders: "
                f"{p.total_orders}") for p in obj]
