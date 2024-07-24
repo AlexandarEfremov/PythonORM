@@ -63,3 +63,4 @@ def get_latest_article():
                f" Average Rating: {avg:.2f}."
 
     return ""
+
