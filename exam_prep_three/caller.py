@@ -1,6 +1,6 @@
 import os
 import django
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Avg
 
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
@@ -49,3 +49,11 @@ def get_top_reviewer():
     return f"Top Reviewer: {obj.full_name} with {obj.num_reviews} published reviews."
 
 
+def get_latest_article():
+    obj = Article.objects.annotate(avg_rating=Avg('review__rating'), num_views=Count('review')).order_by(
+        "published_on").first()
+    if not obj or obj.rating is None:
+        return ""
+
+    return (f"The top-rated article is: {obj.title}, with an average rating of {obj.avg_rating:.2f}, "
+            f"reviewed {obj.num_views} times.")
