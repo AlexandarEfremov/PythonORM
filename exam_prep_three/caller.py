@@ -64,3 +64,17 @@ def get_latest_article():
 
     return ""
 
+
+def get_top_rated_article():
+    top_article = Article.objects.annotate(
+        avg_rating=Avg('reviews__rating'),
+        review_count=Count('reviews')).order_by("-avg_rating", "title").first()
+
+    if top_article:
+        return (
+            f"The top-rated article is: {top_article.title}, with an average rating of {top_article.avg_rating:.2f}, "
+            f"reviewed {top_article.review_count} times.")
+
+    return ""
+
+
