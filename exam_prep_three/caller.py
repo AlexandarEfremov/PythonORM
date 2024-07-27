@@ -64,3 +64,16 @@ def get_latest_article():
 
     return ""
 
+
+def ban_author(email=None):
+    author = Author.objects.annotate(review_count=Count("reviews")).filter(email__exact=email).first()
+
+    if email is None or author is None:
+        return "No authors banned."
+
+    author.is_banned = True
+    author.save()
+    author.reviews.all().delete()
+
+    return f"Author: {author.full_name} is banned! {author.review_count} reviews deleted."
+
