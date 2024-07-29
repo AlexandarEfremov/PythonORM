@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from exam_prep_three.main_app.models import TennisPlayer, Tournament, Match
+from models import TennisPlayer, Tournament, Match
 
 
 @admin.register(TennisPlayer)
@@ -21,7 +21,7 @@ class TournamentAdmin(admin.ModelAdmin):
 class MatchAdmin(admin.ModelAdmin):
     list_display = ['date_played', 'score', 'summary']
     list_filter = ['date_played',]
-    search_fields = ["tournament__name"]
+    search_fields = ["tournament__name",]
 
 
 
