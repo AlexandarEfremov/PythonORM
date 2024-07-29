@@ -37,9 +37,6 @@ class Tournament(models.Model):
         GRASS = "Grass", "Grass"
         HARD_COURT = "Hard Court", "Hard Court"
 
-    class Meta:
-        verbose_name_plural = "Matches"
-
     name = models.CharField(
         max_length=150,
         validators=[
@@ -71,6 +68,9 @@ class Tournament(models.Model):
 
 
 class Match(models.Model):
+    class Meta:
+        verbose_name_plural = "Matches"
+
     score = models.CharField(
         max_length=100,
         validators=[
