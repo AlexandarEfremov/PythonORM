@@ -6,7 +6,7 @@ from django.db.models import Q, Count
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
-from main_app.models import TennisPlayer
+from main_app.models import TennisPlayer, Match
 
 
 def get_tennis_players(search_name=None, search_country=None):
@@ -47,5 +47,22 @@ def get_top_tennis_player():
     if not player:
         return ""
 
-    return (f"Top Tennis Player: {p.full_name} with {p.m_wins} wins." for p in player)
+    return f"Top Tennis Player: {player.full_name} with {player.m_wins} wins."
+
+
+def get_tennis_player_by_matches_count():
+    if not TennisPlayer.objects.exists() or not Match.objects.exists():
+        return ""
+
+    player = TennisPlayer.objects.annotate(
+        most_matches=Count("matches")
+    ).order_by(
+        "-most_matches",
+        "ranking"
+    ).first()
+
+    if not player:
+        return ""
+
+    return f"Tennis Player: {player.full_name} with {player.most_matches} matches played."
 
