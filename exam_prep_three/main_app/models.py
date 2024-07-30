@@ -1,5 +1,11 @@
 from django.core.validators import MinLengthValidator, MaxLengthValidator, MinValueValidator, MaxValueValidator
 from django.db import models
+from django.db.models import Count
+
+
+class TennisPlayerManager(models.Manager):
+    def get_tennis_players_by_wins_count(self):
+        return self.annotate(number_of_wins=Count("won_matches")).order_by('-number_of_wins', 'full_name')
 
 
 class TennisPlayer(models.Model):
@@ -28,6 +34,8 @@ class TennisPlayer(models.Model):
     is_active = models.BooleanField(
         default=True,
     )
+
+    objects = TennisPlayerManager()
 
 
 class Tournament(models.Model):
