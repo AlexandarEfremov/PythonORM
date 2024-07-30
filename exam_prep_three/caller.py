@@ -1,6 +1,6 @@
 import os
 import django
-from django.db.models import Q
+from django.db.models import Q, Count
 
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
@@ -32,4 +32,20 @@ def get_tennis_players(search_name=None, search_country=None):
 
     return "\n".join(f"Tennis Player: {p.full_name}, country: {p.country}, ranking: {p.ranking}" for p in player)
 
+
+def get_top_tennis_player():
+    if not TennisPlayer.objects.exists():
+        return ""
+
+    player = TennisPlayer.objects.annotate(
+        m_wins=Count("won_matches")
+    ).order_by(
+        "-m_wins",
+        "full_name"
+    ).first()
+
+    if not player:
+        return ""
+
+    return (f"Top Tennis Player: {p.full_name} with {p.m_wins} wins." for p in player)
 
