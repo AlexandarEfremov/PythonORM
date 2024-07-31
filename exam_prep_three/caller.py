@@ -6,7 +6,7 @@ from django.db.models import Q, Count
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
-from main_app.models import TennisPlayer, Match
+from main_app.models import TennisPlayer, Match, Tournament
 
 
 def get_tennis_players(search_name=None, search_country=None):
@@ -66,3 +66,20 @@ def get_tennis_player_by_matches_count():
 
     return f"Tennis Player: {player.full_name} with {player.most_matches} matches played."
 
+
+def get_tournaments_by_surface_type(surface=None):
+    if surface is None or not Tournament.objects.exists():
+        return ""
+
+    tournament = Tournament.objects.annotate(
+        num_matches=Count("matches")
+    ).filter(
+        surface_type__icontains=surface
+    ).order_by(
+        "-start_date"
+    )
+
+    if not tournament:
+        return ""
+
+    return "\n".join(f"Tournament: {t.name}, start date: {t.start_date}, matches: {t.num_matches}" for t in tournament)
