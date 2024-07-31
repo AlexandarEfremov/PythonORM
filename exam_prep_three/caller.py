@@ -111,13 +111,18 @@ def get_matches_by_tournament(tournament_name=None):
     if tournament_name is None or not Tournament.objects.exists():
         return "No matches found."
 
-    m = Match.objects.filter(
-        tournament__name__exact=tournament_name
+    tournament = Tournament.objects.get(name__exact=tournament_name)
+    if not tournament or tournament.matches.count() == 0:
+        return "No matches found."
+
+    match = Match.objects.filter(
+        tournament=tournament
     ).order_by(
         "-date_played"
     )
-    if not m:
+
+    if not match:
         return "No matches found."
 
-    winner = m.winner.full_name if m.winner else "TBA"
-    return "\n".join(f"Match played on: {ma.date_played}, score: {ma.score}, winner: {winner}" for ma in m.all())
+    winner = match.winner.full_name if match.winner else "TBA"
+    return "\n".join(f"Match played on: {m.date_played}, score: {m.score}, winner: {winner}" for m in match)
