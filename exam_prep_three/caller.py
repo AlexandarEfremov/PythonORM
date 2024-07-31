@@ -83,3 +83,26 @@ def get_tournaments_by_surface_type(surface=None):
         return ""
 
     return "\n".join(f"Tournament: {t.name}, start date: {t.start_date}, matches: {t.num_matches}" for t in tournament)
+
+
+def get_latest_match_info():
+    if not Match.objects.exists():
+        return ""
+
+    match = Match.objects.order_by(
+        '-date_played',
+        '-id'
+    ).first()
+
+    if not match:
+        return ""
+
+    players = " vs ".join(p.full_name for p in match.players.order_by("full_name"))
+    winner = match.winner.full_name if match.winner else "TBA"
+
+    return (f"Latest match played on: {match.date_played}, "
+            f"tournament: {'tournament__name'}, "
+            f"score: {match.score}, "
+            f"players: {players}, "
+            f"winner: {winner}, "
+            f"summary: {match.summary}")
