@@ -90,19 +90,34 @@ def get_latest_match_info():
         return ""
 
     match = Match.objects.order_by(
-        'date_played',
+        '-date_played',
         '-id'
     ).first()
 
     if not match:
         return ""
 
-    players = " vs ".join(p.full_name for p in match.players.order_by("full_name").all())
+    players = " vs ".join(p.full_name for p in match.players.order_by("full_name"))
     winner = match.winner.full_name if match.winner else "TBA"
 
     return (f"Latest match played on: {match.date_played}, "
-            f"tournament: {match.tournament.full_name}, "
+            f"tournament: {match.tournament.name}, "
             f"score: {match.score}, players: {players}, "
             f"winner: {winner}, "
             f"summary: {match.summary}")
 
+
+def get_matches_by_tournament(tournament_name=None):
+    if tournament_name is None or not Tournament.objects.exists():
+        return "No matches found."
+
+    m = Match.objects.filter(
+        tournament__name__exact=tournament_name
+    ).order_by(
+        "-date_played"
+    )
+    if not m:
+        return "No matches found."
+
+    winner = m.winner.full_name if m.winner else "TBA"
+    return "\n".join(f"Match played on: {ma.date_played}, score: {ma.score}, winner: {winner}" for ma in m.all())
