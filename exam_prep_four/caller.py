@@ -8,7 +8,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
 from django.db.models import Q, Count
-from main_app.models import Author, Article
+from main_app.models import Author, Article, Review
 
 
 def get_authors(search_name=None, search_email=None):
@@ -41,7 +41,7 @@ def get_authors(search_name=None, search_email=None):
 
 
 def get_top_publisher():
-    if not Article.objects.exists():
+    if not Author.objects.exists() or not Article.objects.exists():
         return ""
 
     author = Author.objects.annotate(most_art=Count("articles")).order_by(
@@ -49,9 +49,23 @@ def get_top_publisher():
         "email"
     ).first()
 
-    if not author:
+    if author:
+        return f"Top Author: {author.full_name} with {author.most_art} published articles."
+
+    return ""
+
+
+def get_top_reviewer():
+    if not Review.objects.exists():
         return ""
 
-    return f"Top Author: {author.full_name} with {author.most_art} published articles."
+    author = Author.objects.annotate(most_reviews=Count("reviews")).order_by(
+        "-most_reviews",
+        "email"
+    ).first()
 
+    if author:
+        return f"Top Reviewer: {author.full_name} with {author.most_reviews} published reviews."
+
+    return ""
 
