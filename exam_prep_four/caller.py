@@ -7,8 +7,8 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
-from django.db.models import Q
-from main_app.models import Author
+from django.db.models import Q, Count
+from main_app.models import Author, Article
 
 
 def get_authors(search_name=None, search_email=None):
@@ -38,4 +38,20 @@ def get_authors(search_name=None, search_email=None):
     return "\n".join(f"Author: {a.full_name}, "
                      f"email: {a.email}, "
                      f"status: {'Banned' if a.is_banned else 'Not Banned'}" for a in author)
+
+
+def get_top_publisher():
+    if not Article.objects.exists():
+        return ""
+
+    author = Author.objects.annotate(most_art=Count("articles")).order_by(
+        "-most_art",
+        "email"
+    ).first()
+
+    if not author:
+        return ""
+
+    return f"Top Author: {author.full_name} with {author.most_art} published articles."
+
 
