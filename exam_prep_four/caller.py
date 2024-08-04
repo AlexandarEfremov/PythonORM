@@ -2,13 +2,11 @@ import os
 import django
 
 
-
-# Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
 django.setup()
 
 from django.db.models import Q, Count
-from main_app.models import Author, Article, Review
+from main_app.models import Author, Review
 
 
 def get_authors(search_name=None, search_email=None):
@@ -40,19 +38,21 @@ def get_authors(search_name=None, search_email=None):
                      f"status: {'Banned' if a.is_banned else 'Not Banned'}" for a in author)
 
 
+# def get_top_publisher():
+#     top_author = Author.objects.annotate(count_articles=Count("articles")).order_by("-count_articles", "email").first()
+#
+#     if not top_author or top_author.count_articles <= 0:
+#         return ""
+#
+#     return f"Top Author: {top_author.full_name} with {top_author.count_articles} published articles."
+#
+
 def get_top_publisher():
-    if not Author.objects.exists() or not Article.objects.exists():
+    obj = Author.objects.annotate(num_art=Count('article')).order_by('-num_art', 'email').first()
+    if not obj or obj.num_art == 0:
         return ""
 
-    author = Author.objects.annotate(most_art=Count("articles")).order_by(
-        "-most_art",
-        "email"
-    ).first()
-
-    if author:
-        return f"Top Author: {author.full_name} with {author.most_art} published articles."
-
-    return ""
+    return f"Top Author: {obj.full_name} with {obj.num_art} published articles."
 
 
 def get_top_reviewer():

@@ -68,8 +68,7 @@ class Article(DateTime):
         default="Technology",
     )
     authors = models.ManyToManyField(
-        to='Author',
-        related_name='articles'
+        to='Author'
     )
 
 
